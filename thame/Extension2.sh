@@ -14,7 +14,7 @@ W="\e[97m"; N="\e[0m"
 BR="\e[1;31m"; BG="\e[1;32m"; BY="\e[1;33m"
 BM="\e[1;35m"; BC="\e[1;36m"; BW="\e[1;97m"
 
-URL="https://github.com/YOUR_GITHUB_USERNAME/Extension-Hub/raw/refs/heads/main/thame/Extension"
+URL="https://raw.githubusercontent.com/alokgame2009-bot/Extension-Hub/main/thame/Extension"
 selected_indices=()
 
 trap 'echo -e "\n${R}[!] Force exit detected.${N}"; exit 1' SIGINT
@@ -64,15 +64,31 @@ run_blueprint() {
     cd /var/www/pterodactyl || exit 1
     if [[ "$ACTION" == "install" ]]; then
         echo -e "${G}📥 Installing ${NAME%.blueprint}...${N}"
-        wget -q "$URL/$NAME" -O "$NAME"
-        [[ -s "$NAME" ]] && yes | blueprint -i "$NAME" && rm -f "$NAME"
+        if ! command -v blueprint >/dev/null 2>&1; then
+            echo -e "${R}Blueprint is not installed. Install it from the Blueprint menu first.${N}"
+            return 1
+        fi
+        if curl -fLsS "$URL/$NAME" -o "$NAME" && [[ -s "$NAME" ]]; then
+            yes | blueprint -i "$NAME"
+            local result=$?
+            rm -f "$NAME"
+            return "$result"
+        else
+            rm -f "$NAME"
+            echo -e "${R}Download failed: $NAME${N}"
+            return 1
+        fi
     else
+        if ! command -v blueprint >/dev/null 2>&1; then
+            echo -e "${R}Blueprint is not installed.${N}"
+            return 1
+        fi
         echo -e "${R}🗑️ Removing ${NAME%.blueprint}...${N}"
         yes | blueprint -r "${NAME%.blueprint}"
     fi
 }
 
-get_title() { echo 'ICAgICAg44CCIOKAjCDigJMgTm9iaXRhLmRldiBDT05UUk9MIEhVQiDigJMg44CCICAgICAg' | base64 -d; }
+get_title() { printf '%s' 'EXTENSION HUB | ZIRO EDITION'; }
 
 # ==========================================
 # 📋 MENU
