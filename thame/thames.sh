@@ -15,7 +15,7 @@ W="\e[97m"; N="\e[0m"
 BR="\e[1;31m"; BG="\e[1;32m"; BY="\e[1;33m"
 BM="\e[1;35m"; BC="\e[1;36m"; BW="\e[1;97m"
 
-URL="https://github.com/YOUR_GITHUB_USERNAME/Extension-Hub/raw/refs/heads/main/thame/UI"
+URL="https://raw.githubusercontent.com/alokgame2009-bot/Extension-Hub/main/thame/UI"
 
 trap 'echo -e "\n${R}[!] Force exit detected.${N}"; exit 1' SIGINT
 
@@ -57,20 +57,31 @@ run_blueprint() {
 
     if [[ "$ACTION" == "install" ]]; then
         echo -e "\n${G}📥 Downloading & Installing ${NAME%.blueprint}...${N}"
-        wget -q "$URL/$NAME" -O "$NAME"
-        if [[ -f "$NAME" ]]; then
+        if ! command -v blueprint >/dev/null 2>&1; then
+            echo -e "${R}❌ Blueprint is not installed. Install Blueprint from the Blueprint menu first.${N}"
+            return 1
+        fi
+        if curl -fLsS "$URL/$NAME" -o "$NAME" && [[ -s "$NAME" ]]; then
             yes | blueprint -i "$NAME"
+            local result=$?
             rm -f "$NAME"
+            return "$result"
         else
-            echo -e "${R}❌ Download failed!${N}"
+            rm -f "$NAME"
+            echo -e "${R}❌ Download failed: $NAME${N}"
+            return 1
         fi
     else
+        if ! command -v blueprint >/dev/null 2>&1; then
+            echo -e "${R}❌ Blueprint is not installed.${N}"
+            return 1
+        fi
         echo -e "\n${R}🗑️ Removing ${NAME%.blueprint}...${N}"
         yes | blueprint -r "${NAME%.blueprint}"
     fi
 }
 
-get_title() { echo 'ICAgICAg44CCIOKAjCDigJMgTm9iaXRhLmRldiBDT05UUk9MIEhVQiDigJMg44CCICAgICAg' | base64 -d; }
+get_title() { printf '%s' 'EXTENSION HUB | ZIRO EDITION'; }
 
 # ==========================================
 # 📋 HEADER
@@ -125,6 +136,12 @@ while true; do
   if [[ "$opt" == "0" ]]; then
       echo -e "\n${M} 👋 Extension Hub so gaya... Bye!${N}"
       exit
+  fi
+
+  if [[ ! "$opt" =~ ^[0-9]+$ ]] || (( opt < 1 || opt > ${#names[@]} )); then
+      echo -e "\n${R} ❌ Invalid Option${N}"
+      sleep 1
+      continue
   fi
 
   index=$((opt-1))
