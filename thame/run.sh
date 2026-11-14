@@ -96,7 +96,7 @@ while true; do
                         if [ "$installed" = false ]; then
                             echo -e "${CYAN}Installing...${RESET}"
                             rm -f /etc/apt/keyrings/nodesource.gpg 2>/dev/null
-                            yes | bash <(curl -s https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/Extension-Hub/refs/heads/main/thame/install.sh)
+                            yes | bash <(curl -fsSL https://raw.githubusercontent.com/alokgame2009-bot/Extension-Hub/main/thame/install.sh)
                         else
                             yes | blueprint -rerun-install
                         fi
@@ -177,7 +177,7 @@ while true; do
             draw_box
             echo ""
             echo -e "${CYAN}Launching Theme...${RESET}"
-            bash <(curl -s https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/Extension-Hub/refs/heads/main/thame/thames.sh)
+            bash <(curl -fsSL https://raw.githubusercontent.com/alokgame2009-bot/Extension-Hub/main/thame/thames.sh)
             pause
             ;;
 
@@ -186,7 +186,7 @@ while true; do
             draw_box
             echo ""
             echo -e "${CYAN}Launching Extensions...${RESET}"
-            bash <(curl -s https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/Extension-Hub/refs/heads/main/thame/Extension2.sh)
+            bash <(curl -fsSL https://raw.githubusercontent.com/alokgame2009-bot/Extension-Hub/main/thame/Extension2.sh)
             pause
             ;;
 
